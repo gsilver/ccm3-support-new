@@ -1,0 +1,34 @@
+<div class="container-fluid">
+  <h3>Sub account administrator explorer</h3>
+  <p ng-show="!yesToken">Add token above to do things.</p>
+</div>
+
+<div class="container-fluid" ng-show="yesToken">
+  <button type="button" class="btn btn-default" ng-click="getAccount(1)" ng-show="!accounts">
+      Get sub accounts!!
+  </button>
+
+  <div class="container-fluid">
+    <ul class="accountList">
+      <li ng-repeat="account in accounts" style="padding-left:{{account.depth}}em">
+        <a ng-show="!account.subsRequested" title="List subaccounts of {{account.name}} - if any" href="" ng-click="getAccount(account.id)"><span class="glyphicon glyphicon glyphicon-list" aria-hidden="true"></span> {{account.name}}</a>
+        <span ng-show="account.subsRequested">  <span class="glyphicon glyphicon glyphicon-list" aria-hidden="true"></span> {{account.name}}</span>
+        <strong ng-show="account.nosubs">(No sub accounts)</strong>
+        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+        <a href="" ng-click="getAdmins(account.id)" title="Get Sub Account Admins (if any) for {{account.name}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span class="sr-only">Get Sub Account Admins (if any)</span></a>
+        <ul class="adminList" ng-if="!account.admins.length && account.adminsRequested">
+          <li>
+            <span class="glyphicon glyphicon-alert" aria-hidden="true"></span> No admins here!
+          </li>
+        </ul>
+        <table class="adminList table" ng-if="account.admins.length">
+          <tr ng-repeat="admin in account.admins">
+            <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <a title="View {{admin.user.short_name}}'s MComm profile" target="_blank" href="https://mcommunity.umich.edu/#profile:{{admin.user.login_id}}">{{admin.user.sortable_name}}</a></td>
+            <td> <a href="mailto:{{admin.user.login_id}}@umich.edu">{{admin.user.login_id}}@umich.edu</a></td>
+            <td>{{admin.role}}</td>
+          </tr>
+        </table>
+      </li>
+    </ul>
+  </div>
+</div>

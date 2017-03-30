@@ -1,0 +1,125 @@
+<div class="container-fluid">
+  <form class="form-inline">
+    <div class="form-group">
+      <label class="sr-only" for="personLookUp">person lookup</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="personLookUp" placeholder="uniqname" ng-model="uniqname">
+        <div class="input-group-addon"><i class="glyphicon glyphicon-user"></i></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" ng-click="lookUpPerson()">LookUp {{uniqname}}</button>
+  </form>
+  <br>
+  <ul class="list-group">
+    <li ng-repeat="person in personList" class="list-group-item">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="btn-group btn-group-md">
+            <strong>
+              <a class="btn btn-link" target="_blank" href="https://mcommunity.umich.edu/#profile:{{person.login_id}}">
+                {{person.sortable_name}}
+              </a>
+            </strong>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-default" ng-click="getDetails(person.id)">
+              Details
+            </button>
+            <button type="button" class="btn btn-default" ng-click="getStream(person.sis_user_id)">
+              Activity stream
+            </button>
+            <button type="button" class="btn btn-default" ng-click="getToDoList(person.sis_user_id)">
+              TODO List
+            </button>
+            <button type="button" class="btn btn-default" ng-click="getMissing(person.id)">
+              Missing submissions
+            </button>
+            <button type="button" class="btn btn-default" ng-click="getPages(person.id)">
+              Page views
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="well" ng-show="person.details">
+        <div class="row">
+          <div class="col-lg-1">
+            <img src="{{person.details.avatar_url}}" alt="">
+          </div>
+          <div class="col-lg-11">
+            {{person.details.name}}<br>
+            <a href="mailto:{{person.details.primary_email}}">{{person.details.primary_email}}</a><br>
+            <strong>sis_login_id: </strong>{{person.details.sis_login_id}}, <strong>time_zone: </strong>{{person.details.time_zone}}, <strong>sis_user_id:  </strong>{{person.details.sis_user_id}}<br>
+            <div ng-show="person.details.bio">
+              <hr>
+              {{person.details.bio}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info" ng-show="person.stream.length===0">
+        Nothing happening in your LMS life!
+      </div>
+      <div class="well" ng-show="person.stream">
+        <h3 style="margin-top:0">Activity stream</h3>
+        <div class="panel panel-default" ng-repeat="item in person.stream">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{item.type}}: <a href="{{item.html_url}}" target="_blank">{{item.title}}</a><br></h3>
+          </div>
+          <div class="panel-body">
+            <div class="" ng-bind-html="renderHtml(item.message)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info" ng-show="person.todo.length===0">
+        Nothing to do! Take rest of the day off.
+      </div>
+      <div class="well" ng-show="person.todo">
+        <h3 style="margin-top:0">To Do</h3>
+        <div class="panel panel-default" ng-repeat="item in person.todo">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="{{item.assignment.html_url}}" target="_blank">{{item.assignment.name}}</a> <small ng-show="item.assignment.due_at">Due: {{item.assignment.due_at | date:'medium'}}</small></h3>
+          </div>
+          <div class="panel-body">
+            <div class="" ng-bind-html="renderHtml(item.assignment.description)"></div>
+            Points possible: {{item.assignment.points_possible}} <span ng-hide="item.assignment.omit_from_final_grade"> - counts for final grade.</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info" ng-show="person.missing.length===0">
+        Well done! No missing submissions.
+      </div>
+      <div class="well" ng-show="person.missing">
+        <h3 style="margin-top:0">Missing submissions</h3>
+        <div class="panel panel-default" ng-repeat="item in person.missing">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="{{item.html_url}}" target="_blank">{{item.name}}</a> <small ng-show="item.assignment.due_at">Due: {{item.assignment.due_at | date:'medium'}}</small></h3>
+          </div>
+          <div class="panel-body">
+            <div class="" ng-bind-html="renderHtml(item.description)"></div>
+            Points possible: {{item.points_possible}} <span ng-hide="item.omit_from_final_grade"> - counts for final grade.</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info" ng-show="person.pages.length===0">
+        You have not been very busy.
+      </div>
+      <div class="well" ng-show="person.pages">
+        <h3 style="margin-top:0">Page views</h3>
+        <div class="panel panel-default" ng-repeat="item in person.pages" ng-show="item.session_id">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="{{item.url}}" target="_blank">{{item.context_type}}: {{item.controller}}</a> <small ng-show="item.assignment.due_at">Due: {{item.assignment.due_at | date:'medium'}}</small></h3>
+          </div>
+          <div class="panel-body">
+            <strong>IP:</strong> {{item.remote_ip}}<br>
+            <strong> User Agent:</strong> {{item.user_agent}}
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+
+
+</div>

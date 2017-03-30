@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html ng-app="canvasSupportApp">
+
+<head>
+  <meta charset="utf-8">
+  <title>
+
+  </title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default" ng-controller="navController">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">T&amp;L Utils</a>
+      </div>
+
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Utilities <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/">SAA Explorer</a></li>
+              <li><a href="#util2">Person Explorer</a></li>
+              <li><a href="#util3">Utility 3</a></li>
+              <li><a href="#util4">Utility 4</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#util5">Utility 5</a></li>
+            </ul>
+          </li>
+        </ul>
+        <p class="navbar-text navbar-right"  ng-show="yesToken">Token stored</p>
+        <div class="navbar-form navbar-right" ng-show="!yesToken">
+          <div class="form-group">
+            <label class="sr-only" for="token">Token</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="token" ng-model="token" placeholder="Token">
+            </div>
+            <button type="submit" class="btn btn-primary" ng-click="setToken()">Store token and do stuff</button>
+          </div>
+
+        </div>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+
+  <div ng-view></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+  <script src="vendor/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/factories.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/utils.js"></script>
+
+
+</body>
+
+</html>

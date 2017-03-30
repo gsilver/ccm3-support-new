@@ -1,0 +1,16 @@
+.adminList, .accountList {
+  list-style:none
+}
+
+.adminList li, .accountList li {
+  padding:5px;
+}
+
+table.adminList{
+  margin:21px 0px 1px 26px;
+  width:33.3%;
+}
+
+ul.adminList {
+  margin:10px 0 1px 26px;
+}
