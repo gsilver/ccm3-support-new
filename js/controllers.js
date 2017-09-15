@@ -101,7 +101,7 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things','getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
   $scope.started = false;
-  $scope.selectedColumns = {"sis_login_id":true,"subtotal":true,"total":true,"uniqname":true,"sortable_name":false};
+  $scope.selectedColumns = {"sis_user_id":true,"subtotal":true,"total":true,"sis_login_id":true,"sortable_name":false};
   $scope.getQuizList = function(){
 
     var assUrl = '/api/v1/courses/85443/assignments?include[]=submission';
@@ -154,28 +154,23 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
     };
     $scope.startExport = function(){
       $scope.exportStarted = true;
-    }
+    };
     $scope.concludeExport = function(){
-      var exportable = angular.toJson($scope.assListTotal)
       var userSelectedColumns = [];
       _.each( $scope.selectedColumns, function( val, key ) {
         if ( val ) {
           userSelectedColumns.push(key);
         }
       });
-      console.log(userSelectedColumns);
-
+      var exportable = _.map(JSON.parse(angular.toJson($scope.assListTotal)), function(o) { return _.pick(o, userSelectedColumns); });
       console.log(Papa.unparse(exportable,[{
        quotes: false,
        quoteChar: '"',
 	     delimiter: ",",
 	     header: true,
-       fields:["sis_user_id","sis_login_id","subtotal","total"],
        newline: "\r\n"
      }]));
-      //console.log($scope.assListTotal.length);
     };
-
   };
 
 
