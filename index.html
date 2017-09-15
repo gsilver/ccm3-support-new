@@ -57,8 +57,11 @@
     </div><!-- /.container-fluid -->
   </nav>
 
-
-
+<div class="container-fluid">
+  <div class="alert alert-info" ng-show="!token">
+    Please supply a token.
+  </div>
+</div>
   <div ng-view></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -72,6 +75,7 @@
   <script src="js/factories.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/utils.js"></script>
+  <script src="js/papaparse.min.js"></script>
 
 
 </body>

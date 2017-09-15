@@ -3,11 +3,7 @@ canvasSupportApp.controller('navController', ['$rootScope', '$scope', '$filter',
     $rootScope.token = $scope.token;
     $rootScope.yesToken = true;
   };
-
 }]);
-
-
-
 
 canvasSupportApp.controller('saaController', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, getStuff) {
   $scope.getAccount = function(id) {
@@ -103,8 +99,87 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 }]);
 
-canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, getStuff) {
-  $log.info('3');
+canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things','getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
+  $scope.started = false;
+  $scope.selectedColumns = {"sis_login_id":true,"subtotal":true,"total":true,"uniqname":true,"sortable_name":false};
+  $scope.getQuizList = function(){
+
+    var assUrl = '/api/v1/courses/85443/assignments?include[]=submission';
+
+    getStuff.getGenericStuff(assUrl).then(function(assList) {
+      var assListIds = _.pluck(assList.data, 'id');
+      $scope.assListTotal = [];
+      _.each(assListIds, function(ass, i){
+        $scope.started = true;
+        Things.getThings('/api/v1/courses/85443/assignments/' + ass + '/submissions?per_page=100&include[]=user&grouped=true')
+        .then(function(submissList){
+          _.each(submissList.data, function(sub){
+              $scope.assListTotal.push(sub);
+          });
+          if(i +  1 === assListIds.length){
+              $scope.done = true;
+          }
+        });
+      });
+    });
+
+    $scope.$watch('done', function() {
+      if($scope.done){
+        var user_list_simp=_.uniq(_.pluck($scope.assListTotal, 'user'), _.property('id'));
+         _.each($scope.assListTotal, function(sub_item){
+           if(sub_item.body){
+             var quiz = sub_item.body.split(',')[1].split(':')[1].trim();
+             var match = _.findWhere(user_list_simp, {sis_login_id: sub_item.user.sis_login_id});
+             if(match){
+               match[quiz] = sub_item.score;
+             }
+
+          }
+         });
+        $scope.assListTotal = user_list_simp;
+        _.each($scope.assListTotal, function(row){
+          row['subtotal'] = row[16003] + row[16113] + row[16114];
+          row['total'] = row[16003] + row[16113] + row[16114] + row[22772] + row[17110];
+        });
+
+        calculatedAssList = _.map($scope.assListTotal, function(o) { return _.omit(o, '16003','16113', '16114','22772','17110','16115','23564','avatar_url','id','integration_id','login_id','name','short_name','sis_import_id'); });
+        $scope.empties =  _.filter(calculatedAssList, function(o) { return isNaN(o.total); });
+        $scope.assListTotal = calculatedAssList;
+
+      }
+    });
+    $scope.removeEmpties = function(){
+      $scope.assListTotal = _.filter($scope.assListTotal, function(o) { return !isNaN(o.total); });
+      $scope.empties = [];
+    };
+    $scope.startExport = function(){
+      $scope.exportStarted = true;
+    }
+    $scope.concludeExport = function(){
+      var exportable = angular.toJson($scope.assListTotal)
+      var userSelectedColumns = [];
+      _.each( $scope.selectedColumns, function( val, key ) {
+        if ( val ) {
+          userSelectedColumns.push(key);
+        }
+      });
+      console.log(userSelectedColumns);
+
+      console.log(Papa.unparse(exportable,[{
+       quotes: false,
+       quoteChar: '"',
+	     delimiter: ",",
+	     header: true,
+       fields:["sis_user_id","sis_login_id","subtotal","total"],
+       newline: "\r\n"
+     }]));
+      //console.log($scope.assListTotal.length);
+    };
+
+  };
+
+
+
 }]);
 
 canvasSupportApp.controller('util4Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, getStuff) {
