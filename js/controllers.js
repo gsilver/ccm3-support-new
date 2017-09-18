@@ -101,7 +101,7 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things','getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
   $scope.started = false;
-  $scope.selectedColumns = {"sis_login_id":true,"subtotal":true,"total":true,"sis_user_id":true,"sortable_name":false};
+  $scope.selectedColumns = {"sis_user_id":true,"subtotal":true,"total":true,"sis_login_id":true,"sortable_name":false};
   $scope.getQuizList = function(){
 
     var assUrl = '/api/v1/courses/85443/assignments?include[]=submission';
@@ -172,10 +172,7 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
        quoteChar: '"',
 	     delimiter: ",",
 	     header: true,
-       newline: "\r\n",
-       complete: function(results) {
-         console.log('a');
-       }
+       newline: "\r\n"
      }]);
 
 
@@ -197,7 +194,6 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
        }
 
     };
-
   };
 
 
