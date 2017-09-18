@@ -101,7 +101,7 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things','getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
   $scope.started = false;
-  $scope.selectedColumns = {"sis_login_id":true,"subtotal":true,"total":true,"uniqname":true,"sortable_name":false};
+  $scope.selectedColumns = {"sis_login_id":true,"subtotal":true,"total":true,"sis_user_id":true,"sortable_name":false};
   $scope.getQuizList = function(){
 
     var assUrl = '/api/v1/courses/85443/assignments?include[]=submission';
@@ -154,26 +154,48 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
     };
     $scope.startExport = function(){
       $scope.exportStarted = true;
-    }
+    };
     $scope.concludeExport = function(){
-      var exportable = angular.toJson($scope.assListTotal)
+      var exportable = JSON.parse(angular.toJson($scope.assListTotal));
       var userSelectedColumns = [];
+
       _.each( $scope.selectedColumns, function( val, key ) {
         if ( val ) {
           userSelectedColumns.push(key);
         }
       });
-      console.log(userSelectedColumns);
 
-      console.log(Papa.unparse(exportable,[{
+      var trimmedExportable =  _.map(exportable, function(o) { return _.pick(o, userSelectedColumns); });
+
+      var csv = Papa.unparse(trimmedExportable,[{
        quotes: false,
        quoteChar: '"',
 	     delimiter: ",",
 	     header: true,
-       fields:["sis_user_id","sis_login_id","subtotal","total"],
-       newline: "\r\n"
-     }]));
-      //console.log($scope.assListTotal.length);
+       newline: "\r\n",
+       complete: function(results) {
+         console.log('a');
+       }
+     }]);
+
+
+     downloadCSVFile(csv);
+       function downloadCSVFile(csv) {
+         var nowStamp = moment().format('MMMM-Do-YYYY_h-mm_ss_a');
+         $scope.downloading = true;
+         // credit: http://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
+         var csvContent = "data:text/csv;charset=utf-8," + csv;
+         var encodedUri = encodeURI(csvContent);
+         var link = document.createElement("a");
+         link.setAttribute("href", encodedUri);
+         link.setAttribute("download", 'mlat-export' + nowStamp + '.csv');
+         document.body.appendChild(link); // Required for FF
+         $timeout( function(){
+           link.click();
+           $scope.downloading = false;
+        }, 1000 );
+       }
+
     };
 
   };
