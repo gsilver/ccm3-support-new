@@ -1,3 +1,35 @@
-<div class="container-fluid">
-  <h3>Util 3</h3>
+<div class="container-fluid" ng-show="yesToken">
+  <h3>MLAT Exporter</h3>
+  <div class="row">
+    <div class="col-lg-6">
+      <button type="button" name="doit" ng-show="!done" class="btn btn-primary" ng-click="getQuizList()">Get data</button>
+      <span ng-show="started && !done">Parsing quizz responses: {{assListTotal.length}}</span>
+      <span ng-show="done">Total students <span ng-show="empties.length ===0">that responded to quizzes</span>: {{assListTotal.length}}</span>
+      <p ng-show="empties.length">{{empties.length}} people did not do the quizzes. <a href="" ng-click="removeEmpties()">Remove from list?</a></p>
+    </div>
+    <div class="col-lg-6" style="text-align:right">
+      <button type="button" name="doit" ng-show="done && !exportStarted" class="btn btn-primary" ng-click="startExport()">Export</button>
+      <p ng-show="exportStarted">Select below what columns to keep and then <strong><a href="" ng-click="concludeExport()">export</a></strong><strong ng-show="downloading"> (downlading!)</strong></p>
+      <br>
+    </div>
+  </div>
+  <textarea name="name" rows="8" cols="80" ng-model="exportResult" ng-show="exportResult"></textarea>
+  <table class="table table-striped table-hover" ng-show="done">
+    <tr>
+      <td><input ng-model="selectedColumns.sis_login_id" value="uniqname" type="checkbox" name="selectCol" id="selUniqname" ng-show="exportStarted"> <label for="selUniqname">Uniqname</label></td>
+      <td><label>Name</label></td>
+      <td><input ng-model="selectedColumns.sis_user_id" value="UMID" type="checkbox" name="selectCol" id="selUMID" ng-show="exportStarted"> <label for="selUMID">UMID</label></td>
+      <td><input ng-model="selectedColumns.subtotal" value="subtotal" type="checkbox" name="selectCol" id="selSubtotal" ng-show="exportStarted"> <label for="selSubtotal">Subtotal</label></td>
+      <td><input ng-model="selectedColumns.total" value="total" type="checkbox" name="selectCol" id="selTotal" ng-show="exportStarted"> <label for="selTotal">Total</label></td>
+    </tr>
+    <tr ng-repeat="ass in assListTotal | orderBy:'sortable_name'">
+      <td>{{ass.sis_login_id}}</td>
+      <td>{{ass.sortable_name}}</td>
+      <td>{{ass.sis_user_id}}</td>
+      <td>{{ass.subtotal || ''}}</td>
+      <td>{{ass.total || ''}}</td>
+    </tr>
+  </table>
+
+
 </div>
