@@ -108,26 +108,23 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 }]);
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
-
   $scope.started = false;
-  //$scope.courseId = '';
+  $scope.courseId = '';
   $scope.quizArray = [];
   $scope.selectedQuizzes = [];
   $scope.columns = [];
   $scope.selectedColumns = {
     "sis_user_id": true,
-    "subtotal": true,
-    "total": true,
     "sis_login_id": true,
     "sortable_name": false
   };
   $scope.getAssignments = function() {
-    // error check - is $scope.courseId real
+    // TODO: error check - is $scope.courseId real
     var assUrl = '/api/v1/courses/' + $scope.courseId + '/assignments?include[]=submission';
     getStuff.getGenericStuff(assUrl).then(function(assList) {
-      //error check - did Canvas return an error?
+      //TODO:  error check - did Canvas return an error?
       $scope.quizArray = _.map(assList.data, function(o) {
-        return _.pick(o, 'id', 'name');
+        return _.pick(o, 'id', 'name', 'quiz_id');
       });
     });
   };
@@ -160,37 +157,58 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
             if (match) {
               match[quiz] = sub_item.score;
             }
-
           }
         });
-        $scope.assListTotal = user_list_simp;
-        _.each($scope.assListTotal, function(row) {
-          row['subtotal'] = row[16003] + row[16113] + row[16114];
-          row['total'] = row[16003] + row[16113] + row[16114] + row[22772] + row[17110];
-        });
-        calculatedAssList = _.map($scope.assListTotal, function(o) {
-          return _.omit(o, '16003', '16113', '16114', '22772', '17110', '16115', '23564', 'avatar_url', 'id', 'integration_id', 'login_id', 'name', 'short_name', 'sis_import_id');
-        });
-        $scope.empties = _.filter(calculatedAssList, function(o) {
-          return isNaN(o.total);
-        });
-        $scope.assListTotal = calculatedAssList;
 
+        $scope.assListTotal = user_list_simp;
+
+        _.each($scope.assListTotal, function(row) {
+          row.cols =[];
+          _.each($scope.columns, function(col) {
+            var name = col.name;
+            var add = 0;
+            _.each(col.quiz_ids, function(quiz_id){
+              add = add + row[quiz_id];
+            });
+            row.cols.push({name:name, calc:add});
+          });
+        });
+
+        $scope.assListTotal = _.map($scope.assListTotal, function(o) {
+           return _.pick(o,'sis_login_id', 'sis_user_id', 'sortable_name', 'cols');
+        });
+
+         $scope.empties = _.filter($scope.assListTotal, function(o) {
+           return isNaN(o.cols[0].calc);
+         });
       }
     });
 
 
     $scope.removeEmpties = function() {
       $scope.assListTotal = _.filter($scope.assListTotal, function(o) {
-        return !isNaN(o.total);
+        return !isNaN(o.cols[0].calc);
       });
       $scope.empties = [];
     };
+
     $scope.startExport = function() {
       $scope.exportStarted = true;
     };
+
     $scope.concludeExport = function() {
       var exportable = JSON.parse(angular.toJson($scope.assListTotal));
+      var newCols = [];
+      _.each(exportable, function(row){
+        _.each(row.cols, function(col){
+          row[col.name] = col.calc;
+          newCols.push(col.name);
+        });
+        delete row.cols;
+      });
+
+      newCols = _.uniq(newCols);
+
       var userSelectedColumns = [];
 
       _.each($scope.selectedColumns, function(val, key) {
@@ -198,6 +216,8 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
           userSelectedColumns.push(key);
         }
       });
+
+      userSelectedColumns = _.union(userSelectedColumns, newCols);
 
       var trimmedExportable = _.map(exportable, function(o) {
         return _.pick(o, userSelectedColumns);
@@ -235,11 +255,12 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
 
   $scope.addColumn = function(){
 
-    var newColumn ={name:$scope.newColName, ids:[],names:[]};
+    var newColumn ={name:$scope.newColName, ids:[],names:[], quiz_ids:[]};
     angular.forEach($scope.quizArray, function (quiz) {
         if (quiz.selected) {
           newColumn.ids.push(quiz.id);
           newColumn.names.push(quiz.name);
+          newColumn.quiz_ids.push(quiz.quiz_id);
         }
     });
     if(($scope.newColName !=='' && typeof $scope.newColName !=='undefined') && newColumn.names.length ){
