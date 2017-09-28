@@ -2,15 +2,23 @@
 <div class="container-fluid" ng-show="yesToken">
   <h3>Grades Exporter</h3>
   <div class="container-fluid">
-    <div class="form-inline row panel">
+    <div class="form-inline row" style="border:0px solid #fff" ng-show="!done">
       <p>Step 1 - give a course id</p>
-      <label for="courseId">Course ID</label>
+      <div class="alert alert-danger" ng-show="courseError">{{courseError}} Check that you are using a valid course id.</div>
+      <label for="courseId">Course ID</label><br>
       <input id="courseId" type="text" class="form-control" ng-model='courseId'>
       <button type="button" class="btn btn-primary" ng-click="getAssignments()">
         ...and get assignments
       </button>
     </div>
-    <div class="row panel"  ng-show="quizArray.length">
+    <div class="form-inline row" style="border:0px solid #fff" ng-show="done">
+      <button type="button" class="btn btn-primary" ng-click="startOver()">
+        Start Over
+      </button>
+    </div>
+    <br>
+    <div class="row"  ng-show="quizArray.length && !done" style="border:0px solid #fff">
+      <br>
       <p>Step 2 - create a set of columns in the report, by picking some quizzes and doing the math</p>
       <div class="col-md-2">
         <ul style="list-style:none;margin:0;padding-left:0">
@@ -61,18 +69,20 @@
         </small>
       </div>
     </div>
-
-    <div class="row panel">
-      <div class="col-lg-6">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-show="quizArray.length && columns.length">
         <button type="button" name="doit" ng-show="!done" class="btn btn-primary" ng-click="getQuizList()">Get data</button>
         <span ng-show="started && !done">Parsing quizz responses: {{assListTotal.length}}</span>
         <span ng-show="done">Total students <span ng-show="empties.length ===0">that responded to quizzes</span>: {{assListTotal.length}}</span>
         <p ng-show="empties.length">{{empties.length}} people did not do the quizzes. <a href="" ng-click="removeEmpties()">Remove from list?</a></p>
       </div>
-      <div class="col-lg-6" style="text-align:right">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align:right">
         <button type="button" name="doit" ng-show="done && !exportStarted" class="btn btn-primary" ng-click="startExport()">Export</button>
-        <p ng-show="exportStarted">Select below what columns to keep and then <strong><a href="" ng-click="concludeExport()">export</a></strong><strong ng-show="downloading"> (downlading!)</strong></p>
-        <br>
+        <p ng-show="exportStarted">Select below what columns to keep and then <strong><a href="" ng-click="concludeExport()">export</a></strong><strong ng-show="downloading"> (downlading!)</strong><br>
+          <small>Name will not be exported. You have a choice to export UMID or Uniqname or both.</small>
+        </p>
+
+        <br><br>
       </div>
     </div>
     <table class="table table-striped table-hover" ng-show="done">
@@ -93,7 +103,6 @@
         <td ng-repeat="col in ass.cols">{{col.calc || ''}}</td>
       </tr>
     </table>
-
   </div>
 
 </div>

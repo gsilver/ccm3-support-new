@@ -108,8 +108,10 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 }]);
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
+
+  $rootScope.token ='1770~xoesnOMyjrxv2o6G0zSj3ropA66L2gHCrkpxBOc5u5mYby9PZSFnnOGKdOmQcEX8';
   $scope.started = false;
-  $scope.courseId = '';
+  $scope.courseId = '85443';
   $scope.quizArray = [];
   $scope.selectedQuizzes = [];
   $scope.columns = [];
@@ -118,14 +120,26 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
     "sis_login_id": true,
     "sortable_name": false
   };
+  $scope.startOver = function(){
+    $scope.quizArray =[];
+    $scope.assListTotal =[];
+    $scope.columns = [];
+    $scope.selectedQuizzes = [];
+    $scope.done = false;
+    $scope.started = false;
+  };
+
+
   $scope.getAssignments = function() {
-    // TODO: error check - is $scope.courseId real
     var assUrl = '/api/v1/courses/' + $scope.courseId + '/assignments?include[]=submission';
     getStuff.getGenericStuff(assUrl).then(function(assList) {
-      //TODO:  error check - did Canvas return an error?
+      if (assList.status === 200){
       $scope.quizArray = _.map(assList.data, function(o) {
         return _.pick(o, 'id', 'name', 'quiz_id');
       });
+    } else {
+      $scope.courseError = assList.data.errors[0].message;
+    }
     });
   };
 
