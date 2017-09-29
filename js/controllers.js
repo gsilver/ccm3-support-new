@@ -109,9 +109,8 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
 
-  $rootScope.token ='1770~xoesnOMyjrxv2o6G0zSj3ropA66L2gHCrkpxBOc5u5mYby9PZSFnnOGKdOmQcEX8';
   $scope.started = false;
-  $scope.courseId = '85443';
+  $scope.courseId = '';
   $scope.quizArray = [];
   $scope.selectedQuizzes = [];
   $scope.columns = [];
