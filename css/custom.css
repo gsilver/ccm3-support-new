@@ -14,3 +14,7 @@ table.adminList{
 ul.adminList {
   margin:10px 0 1px 26px;
 }
+
+.capitalize::first-letter {
+  text-transform: uppercase;
+}

@@ -137,7 +137,10 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
         return _.pick(o, 'id', 'name', 'quiz_id');
       });
     } else {
-      $scope.courseError = assList.data.errors[0].message;
+      if(assList.status === 401){
+        $scope.courseError = assList.data.errors[0].message;
+      } else if(assList.status === 404)
+      $scope.courseError ='Either the course ID is invalid or you do not have the right permissions.';
     }
     });
   };
@@ -174,7 +177,6 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
         });
 
         $scope.assListTotal = user_list_simp;
-
         _.each($scope.assListTotal, function(row) {
           row.cols =[];
           _.each($scope.columns, function(col) {
@@ -221,9 +223,7 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
       });
 
       newCols = _.uniq(newCols);
-
       var userSelectedColumns = [];
-
       _.each($scope.selectedColumns, function(val, key) {
         if (val) {
           userSelectedColumns.push(key);
@@ -267,7 +267,6 @@ canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter
   };
 
   $scope.addColumn = function(){
-
     var newColumn ={name:$scope.newColName, ids:[],names:[], quiz_ids:[]};
     angular.forEach($scope.quizArray, function (quiz) {
         if (quiz.selected) {

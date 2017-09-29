@@ -4,7 +4,7 @@
   <div class="container-fluid">
     <div class="form-inline row" style="border:0px solid #fff" ng-show="!done">
       <p>Step 1 - give a course id</p>
-      <div class="alert alert-danger" ng-show="courseError">{{courseError}} Check that you are using a valid course id.</div>
+      <div class="alert alert-danger capitalize" ng-show="courseError">{{courseError}}</div>
       <label for="courseId">Course ID</label><br>
       <input id="courseId" type="text" class="form-control" ng-model='courseId'>
       <button type="button" class="btn btn-primary" ng-click="getAssignments()">
