@@ -4,23 +4,23 @@ canvasSupportApp.run(function($rootScope) {
   $rootScope.token = '';
   $rootScope.yesToken = false;
   $rootScope.server = 'https://umich.test.instructure.com/';
+  $rootScope.server.prod = 'https://umich.instructure.com/';
 });
-
 
 canvasSupportApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
     when('/', {
-      templateUrl: 'views/saa.html',
-      controller: 'saaController'
+      templateUrl: 'views/mlat.html',
+      controller: 'mlatController'
     }).
     when('/util2', {
-      templateUrl: 'views/personLookup.html',
-      controller: 'personLookupController'
+      templateUrl: 'views/mlat.html',
+      controller: 'mlatController'
     }).
     when('/util3', {
-      templateUrl: 'views/util3.html',
-      controller: 'util3Controller'
+      templateUrl: 'views/mlat.html',
+      controller: 'mlatController'
     }).
     when('/util4', {
       templateUrl: 'views/util4.html',

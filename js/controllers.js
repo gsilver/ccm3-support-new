@@ -107,7 +107,7 @@ canvasSupportApp.controller('personLookupController', ['$rootScope', '$scope', '
 
 }]);
 
-canvasSupportApp.controller('util3Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
+canvasSupportApp.controller('mlatController', ['$rootScope', '$scope', '$filter', '$timeout', '$log', 'Things', 'getStuff', function($rootScope, $scope, $filter, $timeout, $log, Things, getStuff) {
 
   $scope.started = false;
   $scope.courseId = '';
